@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Mobile Sheet Updater</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 400px; margin: auto; }
+    input, textarea { width: 100%; padding: 10px; margin: 10px 0; }
+    button { padding: 12px; background-color: #4CAF50; color: white; border: none; width: 100%; }
+  </style>
+</head>
+<body>
+
+<h2>Update Google Sheet</h2>
+<form id="sheetForm">
+  <input type="text" id="name" placeholder="Name" required><br>
+  <input type="email" id="email" placeholder="Email" required><br>
+  <textarea id="message" placeholder="Message" rows="4"></textarea><br>
+  <button type="submit">Submit</button>
+</form>
+
+<p id="status"></p>
+
+<script>
+const form = document.getElementById('sheetForm');
+const status = document.getElementById('status');
+
+// Replace this URL with your Apps Script Web App URL
+const scriptURL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  status.textContent = 'Sending...';
+
+  const data = {
+    name: form.name.value,
+    email: form.email.value,
+    message: form.message.value
+  };
+
+  try {
+    const res = await fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const result = await res.json();
+    status.textContent = 'Submitted successfully!';
+    form.reset();
+  } catch (err) {
+    status.textContent = 'Failed to submit!';
+    console.error(err);
+  }
+});
+</script>
+
+</body>
+</html>
